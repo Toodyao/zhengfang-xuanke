@@ -28,7 +28,7 @@ pingjia.py等下次评教的时候再改
 
 ------
 
-欢迎提issue或fork
+## 欢迎提issue或fork
 
 ------
 
