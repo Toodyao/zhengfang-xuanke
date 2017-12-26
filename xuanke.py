@@ -7,9 +7,10 @@ from lxml import etree
 import os
 import string
 import StringIO
+import getpass
 username=""
 password=""
-host="http://221.218.249.116/"
+host="http://gdjwgl.bjut.edu.cn/"
 session=""
 name=""
 classlist={}
@@ -71,7 +72,7 @@ def login():
             img = img.convert('RGB')
             img.save(username+"icode.jpeg")
             os.system("jp2a "+username+"icode.jpeg -b -i --colors --chars=' *'")
-            icode=raw_input("请输入验证码:")
+            icode=raw_input("请输入验证码(在同一目录下):")
             ele.update({fi.eq(i).attr('name'):icode})
     ele.update({'TextBox1': username, 'TextBox2': password, 'ddl_js':u'学生'.encode('gbk'), 'Button1':u" 登 录 ".encode('gbk')})
     res = open(hosturl+loginpage,ele).read().decode('gbk')
@@ -82,10 +83,10 @@ def login():
         name = re.findall(u".*?(?=同学)",d('#xhxm').text(),re.DOTALL)[0]
         print u"用户名："+name
         try:
-        	gnmkdm = re.findall(u"(?<=xf_xsqxxxk.aspx\?xh="+username+"\&xm="+name+"\&gnmkdm=).*?(?=\")",res,re.DOTALL)[0]
+            gnmkdm = re.findall(u"(?<=xf_xsqxxxk.aspx\?xh="+username+"\&xm="+name+"\&gnmkdm=).*?(?=\")",res,re.DOTALL)[0]
         except:
-        	print u"没有找到选课界面"
-        	exit()
+            print u"没有找到选课界面"
+            exit()
         return 1
     elif u"密码错误" in res:
         print u"密码错误!"
@@ -138,19 +139,23 @@ def getclasslist():
     ele={}
     for i in range(0,len(tr)):
         td=tr.eq(i)('td')
-        xkbtname=td.eq(0)('input').attr('name')
+        #xkbtname是容量
+        xkbtname=td.eq(9).text()
+        # xkbtname=td.eq(0)('input').attr('name')
         xsbtname=td.eq(1)('input').eq(0).attr('name')
         xsvalue=td.eq(1)('input').eq(1).attr('value')
-        name=td.eq(2)('a').text()
-        code=td.eq(3).text()
-        teacher=td.eq(4)('a').text()
-        time=td.eq(5).attr('title')
+        name=td.eq(1)('a').text()
+        code=td.eq(2).text()
+        teacher=td.eq(3)('a').text()
+        time=td.eq(4).text()
+        #time=td.eq(5).attr('title')
         if time == None:
             time=""
-        place=td.eq(6).text()
+        #place是已选
+        place=td.eq(10).text()
         if place == None:
             place=""
-        credit=td.eq(7).text()
+        credit=td.eq(6).text()
         ele.update({i+1:{'xkbtname':xkbtname,'xsbtname':xsbtname,'xsvalue':xsvalue,'name':name,'code':code,'teacher':teacher,'time':time,'place':place,'credit':credit,}})
     classlist = ele
 #打印课程列表
@@ -159,19 +164,24 @@ def printclasstable():
     for i in classlist:
         print "%d\t"%i,
         print classlist[i]['name']
+        print u"\t课程代码："+classlist[i]['code']
+        print u"\t教师："+classlist[i]['teacher']
         print u"\t时间："+classlist[i]['time']
         print u"\t学分："+classlist[i]['credit']
+        print u"\t容量："+classlist[i]['xkbtname']
+        print u"\t已选："+classlist[i]['place']
+        print "--------"
 #输出课程详细信息
 def printclassinfo(i):
     print u"编号"
     print "%d\t"%i,
     print classlist[i]['name']
-    print u"\t代号："+classlist[i]['code']
+    print u"\t课程代码："+classlist[i]['code']
     print u"\t时间："+classlist[i]['time']
     print u"\t学分："+classlist[i]['credit']
     print u"\t教师："+classlist[i]['teacher']
-    print u"\t地点："+classlist[i]['place']
-    print u"\t教材："+(((classlist[i]['xsvalue']=="|||") and [u"无"]) or [classlist[i]['xsvalue']])[0]
+    #print u"\t地点："+classlist[i]['place']
+    #print u"\t教材："+(((classlist[i]['xsvalue']=="|||") and [u"无"]) or [classlist[i]['xsvalue']])[0]
 #获得选课页面表单值
 def getxkele(res):
     d = pq(res)
@@ -234,17 +244,20 @@ def nowclass():
 def xk(i):
     shu=0
     if classlist[i]['xsvalue']!="|||":
-        print u"是否订教材"+classlist[i]['xsvalue']+"?[1/0]"
-        shu=raw_input()
-        shu=string.atoi(shu)
+        pass
+    #   print u"是否订教材"+classlist[i]['xsvalue']+"?[1/0]"
+    #   shu=raw_input()
+    #   shu=string.atoi(shu)
     ele=xkele(i,shu,getcurrentres(i,1))
-    print u"正在刷课"
+    print u"正在刷课, Ctrl+C停止"
     ct=0
     while 1:
         ct=ct+1
         try:
             res=xkdeal(ele)
-        except:
+        except KeyboardInterrupt:
+            break
+        except :
             print u"访问出现异常，将跳过"
             continue
         if checkxk(res,classlist[i]['name']):
@@ -265,8 +278,8 @@ def xk(i):
                     print u"第%d次尝试，当前信息：现在不是选课时间"%ct
 def printcommand():
     print u"table       - 课程列表"
-    print u"info+编号   - 课程详细信息"
-    print u"choose+编号 - 开始选课"
+    print u"info+编号    - 课程详细信息"
+    print u"choose+编号  - 开始选课"
     print u"reload      - 重新加载课程列表"
     print u"now         - 查看已选课程"
     print u"onhook      - 设置挂机模式"
