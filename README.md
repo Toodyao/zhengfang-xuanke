@@ -1,9 +1,14 @@
 # 说明
 由 https://github.com/xiaohuanshu/zhengfang-xuanke fork而来
+
 在此基础上修改了xuanke.py，适应本校教务系统
+
 pingjia.py等下次评教的时候再改
+
 原版本只支持Python 2.7
+
 内网下使用
+
 
 感谢原作者
 
@@ -26,6 +31,8 @@ pingjia.py等下次评教的时候再改
 
 
 ---以下为原README---
+
+```
 # zhengfang-xuanke
 正方教务系统刷课/评价工具
 
@@ -45,3 +52,4 @@ pingjia.py等下次评教的时候再改
 * 验证码显示需要安装pillow,没安装jp2a的在根目录找二维码
 * 编辑修改host为正方教务系统地址
 * 如果登录时报错，尝试更改loginpage为default5.aspx或者default3.aspx
+```
