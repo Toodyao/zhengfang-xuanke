@@ -1,3 +1,31 @@
+# 说明
+由 https://github.com/xiaohuanshu/zhengfang-xuanke fork而来
+在此基础上修改了xuanke.py，适应本校教务系统
+pingjia.py等下次评教的时候再改
+原版本只支持Python 2.7
+内网下使用
+
+感谢原作者
+
+# 依赖库
+* PyQuery
+* PIL/Pillow
+
+# 修改内容
+* host为本校网址
+* 修改错位问题
+* 取消教材的爬取
+* 部分交互优化
+
+# 已知问题
+* 只能抓取200个课程
+* 可能会有乱码
+
+欢迎提issue或fork
+
+
+
+---以下为原README---
 # zhengfang-xuanke
 正方教务系统刷课/评价工具
 
