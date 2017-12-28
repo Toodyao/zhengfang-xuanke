@@ -72,7 +72,7 @@ def login():
             img = img.convert('RGB')
             img.save(username+"icode.jpeg")
             os.system("jp2a "+username+"icode.jpeg -b -i --colors --chars=' *'")
-            icode=raw_input("请输入验证码(在同一目录下):")
+            icode=raw_input("请输入验证码(在同一目录下):".decode('utf-8').encode('gbk'))
             ele.update({fi.eq(i).attr('name'):icode})
     ele.update({'TextBox1': username, 'TextBox2': password, 'ddl_js':u'学生'.encode('gbk'), 'Button1':u" 登 录 ".encode('gbk')})
     res = open(hosturl+loginpage,ele).read().decode('gbk')
