@@ -296,8 +296,9 @@ def changeonhook():
 #程序初始化登录函数
 def init():
     global username,password
-    username=raw_input("用户名:")
-    password=raw_input("密  码:")
+    username=raw_input(u"用户名:".encode('gbk'))
+    print u"密  码:",
+    password=getpass.getpass('')
 
 #程序开始
 if __name__ == '__main__':
